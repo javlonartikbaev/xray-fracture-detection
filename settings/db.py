@@ -3,13 +3,13 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
-from .conf import settings
+from conf import settings
 
 DB_URL = f'postgresql://{settings.DB_USER}:{settings.DB_PW}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
 
 engine = create_engine(DB_URL)
 session_factory = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-Base = declarative_base()
+DeclarativeBase = declarative_base()
 
 
 def get_db():
