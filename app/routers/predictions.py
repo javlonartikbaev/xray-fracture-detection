@@ -1,4 +1,7 @@
+import io
+
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+from PIL import Image
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -27,6 +30,11 @@ async def upload_prediction(
         raise HTTPException(status_code=400, detail="Empty file uploaded")
     if len(image_bytes) > settings.max_file_size:
         raise HTTPException(status_code=413, detail=f"File exceeds maximum size of {settings.max_file_size} bytes")
+
+    try:
+        Image.open(io.BytesIO(image_bytes)).verify()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Uploaded file is not a valid image")
     return await prediction_service.create_prediction(
         db=db,
         user_id=user_id,

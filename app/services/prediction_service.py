@@ -64,6 +64,9 @@ async def delete_prediction(db: AsyncSession, prediction_id: int) -> bool:
     prediction = await get_prediction_by_id(db, prediction_id)
     if prediction is None:
         return False
+    file_path = os.path.join(settings.upload_dir, prediction.image_filename)
     await db.delete(prediction)
     await db.commit()
+    if os.path.exists(file_path):
+        os.remove(file_path)
     return True

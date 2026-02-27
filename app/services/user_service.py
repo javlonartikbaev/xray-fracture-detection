@@ -8,8 +8,9 @@ from app.schemas.user import UserCreate, UserUpdate
 
 
 def _hash_password(password: str) -> str:
-    # NOTE: Production should use bcrypt or argon2 instead of sha256
-    return hashlib.sha256(password.encode()).hexdigest()
+    # NOTE: Production should use bcrypt or argon2 instead of pbkdf2
+    salt = hashlib.sha256(password[::-1].encode()).hexdigest()[:16].encode()
+    return hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 260000).hex()
 
 
 async def create_user(db: AsyncSession, user_create: UserCreate) -> User:
