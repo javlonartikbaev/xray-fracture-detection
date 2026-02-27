@@ -6,7 +6,7 @@ from sqlalchemy import String, Date
 from settings.base import Base
 
 
-class Doctors(Base):
+class Doctor(Base):
     first_name: Mapped[str] = mapped_column(String(100))
     last_name: Mapped[str] = mapped_column(String(100))
     phone_number: Mapped[str] = mapped_column(String(16))
