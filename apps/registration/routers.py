@@ -23,7 +23,7 @@ async def user_register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return new_user
 
 
-@router.get('/users', response_model=List[UserRead])
+@router.get('/list', response_model=List[UserRead])
 async def read_users(db: AsyncSession = Depends(get_db)):
     users = await get_users(db)
     return users
