@@ -17,7 +17,10 @@ router = APIRouter(prefix='/doctors', tags=['Doctors'])
 
 @router.post('/register', status_code=status.HTTP_201_CREATED, response_model=DoctorRead)
 async def register_doctor(doctor: DoctorCreate, db: AsyncSession = Depends(get_db)):
-    doctor = await create_doctor(doctor, db)
+    try:
+        doctor = await create_doctor(doctor, db)
+    except:
+        raise HTTPException(status_code=400, detail='Doctor with this phone number already exists')
     return doctor
 
 
@@ -25,3 +28,4 @@ async def register_doctor(doctor: DoctorCreate, db: AsyncSession = Depends(get_d
 async def list_doctors(db: AsyncSession = Depends(get_db), skip: int = 0, limit: int = 10):
     result = await get_doctors(db, skip, limit)
     return result
+
