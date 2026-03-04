@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from starlette import status
-
+from sqlalchemy.exc import IntegrityError
 from apps.doctors.schemas import DoctorCreate, DoctorRead
 from apps.doctors.services import create_doctor_service, get_doctors_service, get_doctor_service
 from apps.registration.schemas import UserRead
@@ -17,13 +17,19 @@ router = APIRouter(prefix='/doctors', tags=['Doctors'])
 
 @router.post('/register', status_code=status.HTTP_201_CREATED, response_model=DoctorRead)
 async def register_doctor(doctor: DoctorCreate, db: AsyncSession = Depends(get_db)):
+
     try:
         doctor = await create_doctor_service(doctor, db)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        error = str(e.orig)
+        if "phone_number" in error:
+            detail = "Phone number already exists"
+        raise HTTPException(status_code=400, detail=detail)
     return doctor
 
 
+
+# Пока что не нужно
 @router.get('/list', status_code=status.HTTP_200_OK, response_model=List[DoctorRead])
 async def list_doctors(db: AsyncSession = Depends(get_db), skip: int = 0, limit: int = 10):
     result = await get_doctors_service(db, skip, limit)

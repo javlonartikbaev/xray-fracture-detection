@@ -13,6 +13,11 @@ class DoctorCreate(BaseModel):
     profile_img: str
 
 
-class DoctorRead(DoctorCreate):
+class DoctorRead(BaseModel):
     id: int
+    first_name: str
+    last_name: str
+    phone_number: str
+    date_of_birth: date
+    profile_img: str
     model_config = ConfigDict(from_attributes=True)
